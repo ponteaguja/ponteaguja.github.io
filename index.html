@@ -18,17 +18,17 @@
     .producto p { font-size: 0.9em; color: #666; margin: 0 0 10px; text-align: center; }
     .precio { font-weight: bold; font-size: 1.1em; color: #007b5e; }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/supabase.min.js"></script>
 </head>
 <body>
   <h1>Inventario de Vinilos y Cuadros</h1>
   <div id="productos">Cargando productos...</div>
-
-  <script>
+  
+  <script type="module">
+    import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
     // Reemplaza estas variables con tus datos reales
     const SUPABASE_URL = "https://xblivnihoenidybqbevm.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhibGl2bmlob2VuaWR5YnFiZXZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMzY5NDIsImV4cCI6MjA2MjgxMjk0Mn0.BBY3JbyPtnq0kZwBxsXOTXg_gaGCvSqVR0GAoxZZoF4";
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
       auth: {
         persistSession: false,
         autoRefreshToken: false
@@ -39,7 +39,7 @@
     });
 
     async function cargarProductos() {
-      const { data, error } = await supabaseClient.from('products').select('*');
+      const { data, error } = await supabase.from('products').select('*');
       const contenedor = document.getElementById('products');
       if (error) {
         contenedor.innerHTML = 'Error al cargar productos.';
