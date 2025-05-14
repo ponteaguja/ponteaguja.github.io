@@ -58,14 +58,16 @@
         }
 
         contenedor.innerHTML = '';
-        data.forEach(({ name, description, price, image_url }) => {
+        data.forEach(({ name, price, image_url, artist, album, label, format }) => {
           const div = document.createElement('div');
           div.className = 'producto';
+
+          const descripcionConcatenada = [artist, label, format].filter(Boolean).join('<br>');
           
           div.innerHTML = `
             <img src="${image_url}" alt="${name}" />
             <h2>${name}</h2>
-            <p class="descripcion">${description}</p>
+            <p class="descripcion">${descripcionConcatenada}</p>
             <div class="precio">$${price}</div>
           `;
           contenedor.appendChild(div);
