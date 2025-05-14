@@ -1,60 +1,62 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Ponte Aguja - Inventario</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-  }
-  h1 {
-    text-align: center;
-  }
-  .producto {
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
-  .producto img {
-    max-width: 150px;
-    margin-right: 20px;
-  }
-  .descripcion {
-    max-width: 600px;
-  }
-  .precio {
-    font-weight: bold;
-    margin-top: 10px;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mi Inventario</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 20px; }
+    h1 { text-align: center; color: #333; }
+    #productos { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
+    .producto {
+      background: white; border-radius: 8px; padding: 15px; width: 250px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .producto img { max-width: 100%; border-radius: 6px; margin-bottom: 10px; }
+    .producto h2 { font-size: 1.2em; margin: 0 0 8px; color: #555; text-align: center; }
+    .producto p { font-size: 0.9em; color: #666; margin: 0 0 10px; text-align: center; }
+    .precio { font-weight: bold; font-size: 1.1em; color: #007b5e; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/supabase.min.js"></script>
 </head>
 <body>
-<h1>Vinilos, Cuadros y otros placeres</h1>
+  <h1>Inventario de Vinilos y Cuadros</h1>
+  <div id="productos">Cargando productos...</div>
 
-<div class="producto">
-  <img src="https://via.placeholder.com/150" alt="Disco de vinilo">
-  <div class="descripcion">
-    <h2>Disco de Vinilo XYZ</h2>
-    <p>Disco clásico de 180g, excelente estado, edición limitada.</p>
-    <div class="precio">Precio: $25</div>
-  </div>
-</div>
+  <script>
+    // Reemplaza estas variables con tus datos reales
+    const supabaseUrl = 'https://xblivnihoenidybqbevm.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhibGl2bmlob2VuaWR5YnFiZXZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMzY5NDIsImV4cCI6MjA2MjgxMjk0Mn0.BBY3JbyPtnq0kZwBxsXOTXg_gaGCvSqVR0GAoxZZoF4';
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-<div class="producto">
-  <img src="https://via.placeholder.com/150" alt="Cuadro">
-  <div class="descripcion">
-    <h2>Cuadro de arte moderno</h2>
-    <p>Cuadro enmarcado 50x70 cm, listo para colgar.</p>
-    <div class="precio">Precio: $40</div>
-  </div>
-</div>
+    async function cargarProductos() {
+      const { data, error } = await supabase.from('productos').select('*');
+      const contenedor = document.getElementById('productos');
+      if (error) {
+        contenedor.innerHTML = 'Error al cargar productos.';
+        console.error(error);
+        return;
+      }
+      if (!data.length) {
+        contenedor.innerHTML = 'No hay productos disponibles.';
+        return;
+      }
+      contenedor.innerHTML = '';
+      data.forEach(({ nombre, descripcion, precio, imagen_url }) => {
+        const div = document.createElement('div');
+        div.className = 'producto';
+        div.innerHTML = `
+          <img src="${imagen_url}" alt="${nombre}" />
+          <h2>${nombre}</h2>
+          <p>${descripcion}</p>
+          <div class="precio">$${precio}</div>
+        `;
+        contenedor.appendChild(div);
+      });
+    }
 
-<!-- Puedes duplicar el bloque anterior para agregar más artículos -->
-
+    window.onload = cargarProductos;
+  </script>
 </body>
 </html>
