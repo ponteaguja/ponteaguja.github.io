@@ -63,7 +63,7 @@
           div.className = 'producto';
 
           // Elimina saltos de línea en description
-          const descripcionSinSaltos = description.replace(/(\r\n|\r|\n)/g, '');
+          const descripcionSinSaltos = String(description).replace(/(\r\n|\r|\n)/g, '');
           
           div.innerHTML = `
             <img src="${image_url}" alt="${name}" />
