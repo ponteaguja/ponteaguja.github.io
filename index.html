@@ -67,7 +67,10 @@
           div.innerHTML = `
             <img src="${image_url}" alt="${name}" />
             <h2>${name}</h2>
-            <p class="descripcion"><strong>Artista: </strong>"${artist}"<br><strong>Sello: </strong>"${label}"<br><strong>Origen: </strong>"${origin}"<br><strong>Género: </strong>"${style}"</p>
+            <p class="descripcion"><strong>Artista: </strong>${artist}
+              <br><strong>Sello: </strong>${label}
+              <br><strong>Origen: </strong>${origin}
+              <br><strong>Género: </strong>${style}</p>
             <div class="precio">$${price}</div>
           `;
           contenedor.appendChild(div);
