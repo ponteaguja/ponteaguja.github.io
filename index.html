@@ -41,6 +41,9 @@
 
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    // Elimina saltos de línea en description
+    const descripcionSinSaltos = description.replace(/(\r\n|\r|\n)/g, '');
+
     async function cargarProductosPorTipo(tipo, contenedorId) {
       const contenedor = document.getElementById(contenedorId);
       try {
@@ -64,7 +67,7 @@
           div.innerHTML = `
             <img src="${image_url}" alt="${name}" />
             <h2>${name}</h2>
-            <p class="descripcion">${description}</p>
+            <p class="descripcion">${descripcionSinSaltos}</p>
             <div class="precio">$${price}</div>
           `;
           contenedor.appendChild(div);
