@@ -58,12 +58,12 @@
 
         contenedor.innerHTML = '';
         data.forEach(({ name, description, price, image_url }) => {
-
-          // Elimina saltos de línea en description
-          const descripcionSinSaltos = description.replace(/(\r\n|\r|\n)/g, '');
           
           const div = document.createElement('div');
           div.className = 'producto';
+
+          // Elimina saltos de línea en description
+          const descripcionSinSaltos = description.replace(/(\r\n|\r|\n)/g, '');
           
           div.innerHTML = `
             <img src="${image_url}" alt="${name}" />
