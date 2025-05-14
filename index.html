@@ -62,12 +62,12 @@
           const div = document.createElement('div');
           div.className = 'producto';
 
-          const descripcionConcatenada = [artist, label, format].filter(Boolean).join('<br>');
+          //const descripcionConcatenada = [artist, label, format].filter(Boolean).join('<br>');
           
           div.innerHTML = `
             <img src="${image_url}" alt="${name}" />
             <h2>${name}</h2>
-            <p class="descripcion">${descripcionConcatenada}</p>
+            <p class="descripcion">"AAA"" - ""BBB"</p>
             <div class="precio">$${price}</div>
           `;
           contenedor.appendChild(div);
