@@ -47,7 +47,7 @@
         const { data, error } = await supabaseClient
           .from('products')
           .select('*')
-          .eq('type', tipo)
+          .ilike('type', `%${tipo}%`)
           .gt('stock', 0);  // <-- Aquí filtramos stock > 0
 
         if (error) throw error;
