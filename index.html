@@ -70,12 +70,12 @@
             precioHTML = `<span class="precio">$${price}</span>`;
           }
 
-          //const descripcionConcatenada = [artist, label, format].filter(Boolean).join('<br>');
+          const descripcionConcatenada = `Artista: </strong>${artist}<br><strong>Sello: </strong>${label}<br><strong>Origen: </strong>${origin}<br><strong>Género: </strong>${style}`;
           
           div.innerHTML = `
             <img src="${image_url}" alt="${name}" />
             <h2>${name}</h2>
-            <p class="descripcion"><strong>Artista: </strong>${artist}<br><strong>Sello: </strong>${label}<br><strong>Origen: </strong>${origin}<br><strong>Género: </strong>${style}</p>
+            <p class="descripcion"><strong>${descripcionFormatted}</p>
             <dlass="precio">${precioHTML}</div>
           `;
           contenedor.appendChild(div);
