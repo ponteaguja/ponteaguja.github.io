@@ -66,8 +66,7 @@
           .from('products')
           .select('*')
           .ilike('type', `%${tipo}%`)
-          .gt('stock', 0)
-          .order('name': {ascending: true})};
+          .gt('stock', 0);
 
         if (error) throw error;
 
