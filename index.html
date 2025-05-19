@@ -41,13 +41,14 @@
   <h2>Cuadros</h2>
   <div id="cuadros">Cargando cuadros...</div>
   
+  <!-- Carga el bundle UMD de Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script>
-
     const SUPABASE_URL = "https://xblivnihoenidybqbevm.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhibGl2bmlob2VuaWR5YnFiZXZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMzY5NDIsImV4cCI6MjA2MjgxMjk0Mn0.BBY3JbyPtnq0kZwBxsXOTXg_gaGCvSqVR0GAoxZZoF4";
 
-    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+    // Aquí usamos supabase.createClient del bundle UMD
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     // Observer para animar la aparición de productos
     const observer = new IntersectionObserver((entries) => {
@@ -67,7 +68,7 @@
           .select('*')
           .ilike('type', `%${tipo}%`)
           .gt('stock', 0)
-          .order('name', { ascending: true });  // <-- Aquí ordenamos por nombre ascendente
+          .order('name', { ascending: true });  // Ordenar por nombre ascendente
 
         if (error) throw error;
 
@@ -80,11 +81,11 @@
         data.forEach(({ name, price, price_discounted, image_url, artist, album, label, origin, style }) => {
           const div = document.createElement('div');
           div.className = 'producto';
-        
+
           // Formatear precios con separador de miles (punto)
           const priceFormatted = price.toLocaleString('es-ES');
           const priceDiscountedFormatted = price_discounted != null ? price_discounted.toLocaleString('es-ES') : null;
-        
+
           // Construir HTML para precios
           let precioHTML = '';
           if (priceDiscountedFormatted != null) {
@@ -92,9 +93,9 @@
           } else {
             precioHTML = `<span class="precio">$${priceFormatted}</span>`;
           }
-        
+
           const descriptionFormatted = `<strong>Artista:</strong> ${artist}<br><strong>Sello:</strong> ${label}<br><strong>Origen:</strong> ${origin}<br><strong>Género:</strong> ${style}`;
-          
+
           div.innerHTML = `
             <img src="${image_url}" alt="${name}" />
             <h2>${name}</h2>
@@ -102,7 +103,7 @@
             <div class="precio">${precioHTML}</div>
           `;
           contenedor.appendChild(div);
-          observer.observe(div); // <-- Aquí se activa la animación
+          observer.observe(div); // Activa la animación
         });
 
       } catch (error) {
