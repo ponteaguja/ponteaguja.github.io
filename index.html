@@ -80,15 +80,19 @@
         data.forEach(({ name, price, price_discounted, image_url, artist, album, label, origin, style }) => {
           const div = document.createElement('div');
           div.className = 'producto';
-
+        
+          // Formatear precios con separador de miles (punto)
+          const priceFormatted = price.toLocaleString('es-ES');
+          const priceDiscountedFormatted = price_discounted != null ? price_discounted.toLocaleString('es-ES') : null;
+        
           // Construir HTML para precios
           let precioHTML = '';
-          if (price_discounted != null) {
-            precioHTML = `<span style="text-decoration: line-through; color: #999;">$${price}</span> <span style="color: #d32f2f; font-weight: bold;">$${price_discounted}</span>`;
+          if (priceDiscountedFormatted != null) {
+            precioHTML = `<span style="text-decoration: line-through; color: #999;">$${priceFormatted}</span> <span style="color: #d32f2f; font-weight: bold;">$${priceDiscountedFormatted}</span>`;
           } else {
-            precioHTML = `<span class="precio">$${price}</span>`;
+            precioHTML = `<span class="precio">$${priceFormatted}</span>`;
           }
-
+        
           const descriptionFormatted = `<strong>Artista:</strong> ${artist}<br><strong>Sello:</strong> ${label}<br><strong>Origen:</strong> ${origin}<br><strong>Género:</strong> ${style}`;
           
           div.innerHTML = `
@@ -100,6 +104,7 @@
           contenedor.appendChild(div);
           observer.observe(div); // <-- Aquí se activa la animación
         });
+
       } catch (error) {
         contenedor.innerHTML = `Error al cargar ${tipo.toLowerCase()}.`;
         console.error(error);
