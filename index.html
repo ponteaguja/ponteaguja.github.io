@@ -67,7 +67,7 @@
           .select('*')
           .ilike('type', `%${tipo}%`)
           .gt('stock', 0)
-          .order('price', { ascending: True});;
+          .order('price', { ascending: True});
 
         if (error) throw error;
 
