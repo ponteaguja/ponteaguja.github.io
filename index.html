@@ -7,13 +7,6 @@
   <style>
     body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 20px; }
     h1, h2 { text-align: center; color: #333; }
-    .ordenar-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 20px;
-      gap: 10px;
-    }
     #vinilos, #cuadros {
       display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-bottom: 40px;
     }
@@ -42,14 +35,6 @@
 <body>
   <h1>Inventario</h1>
 
-  <div class="ordenar-container">
-    <label for="orden-precio">Ordenar por precio:</label>
-    <select id="orden-precio">
-      <option value="asc">Menor a mayor</option>
-      <option value="desc">Mayor a menor</option>
-    </select>
-  </div>
-
   <h2>Vinilos</h2>
   <div id="vinilos">Cargando vinilos...</div>
 
@@ -74,17 +59,15 @@
       });
     }, { threshold: 0.2 });
 
-    // Función para cargar productos con orden
-    async function cargarProductosPorTipo(tipo, contenedorId, ordenPrecio = 'asc') {
+    async function cargarProductosPorTipo(tipo, contenedorId) {
       const contenedor = document.getElementById(contenedorId);
       try {
-        contenedor.innerHTML = 'Cargando...';
         const { data, error } = await supabaseClient
           .from('products')
           .select('*')
           .ilike('type', `%${tipo}%`)
           .gt('stock', 0)
-          .order('price', { ascending: ordenPrecio === 'asc' });
+          .order('name': {ascending: true});
 
         if (error) throw error;
 
@@ -115,7 +98,7 @@
             <div class="precio">${precioHTML}</div>
           `;
           contenedor.appendChild(div);
-          observer.observe(div);
+          observer.observe(div); // <-- Aquí se activa la animación
         });
       } catch (error) {
         contenedor.innerHTML = `Error al cargar ${tipo.toLowerCase()}.`;
@@ -123,22 +106,8 @@
       }
     }
 
-    // Manejo del select para ordenar
-    const selectOrden = document.getElementById('orden-precio');
-    let ordenActual = selectOrden.value;
-
-    function recargarProductos() {
-      cargarProductosPorTipo('Vinilos', 'vinilos', ordenActual);
-      cargarProductosPorTipo('Cuadros', 'cuadros', ordenActual);
-    }
-
-    selectOrden.addEventListener('change', (e) => {
-      ordenActual = e.target.value;
-      recargarProductos();
-    });
-
-    // Carga inicial
-    recargarProductos();
+    cargarProductosPorTipo('Vinilos', 'vinilos');
+    cargarProductosPorTipo('Cuadros', 'cuadros');
   </script>
 </body>
 </html>
