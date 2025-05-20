@@ -71,11 +71,9 @@
       border-radius: 6px;
       transition: filter 0.3s ease;
     }
-    /* Imagen en blanco y negro para productos sin stock */
     .producto.stock-cero .img-container img {
       filter: grayscale(100%);
     }
-    /* Fleje "Oferta" */
     .oferta-badge {
       position: absolute;
       top: 8px;
@@ -92,7 +90,6 @@
       z-index: 10;
       text-transform: uppercase;
     }
-    /* Fleje "Agotado" con mayor prioridad (z-index mayor) */
     .agotado-badge {
       position: absolute;
       top: 8px;
@@ -106,7 +103,7 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.5);
       user-select: none;
       pointer-events: none;
-      z-index: 20; /* mayor que oferta */
+      z-index: 20;
       text-transform: uppercase;
     }
     .producto h2 { 
@@ -128,7 +125,6 @@
       color: var(--color-precio); 
       margin-bottom: 10px;
     }
-    /* Estilo botón Wishlist */
     .btn-wishlist {
       background-color: var(--color-boton-wishlist-bg);
       color: var(--color-boton-wishlist-text);
@@ -176,7 +172,9 @@
       });
     }, { threshold: 0.2 });
 
-    const FORM_GOOGLE_URL = "https://forms.gle/MLC1aN2bYkyQRWNNA"; // Cambia por tu URL real
+    // Reemplaza este valor por el parámetro real de tu formulario de Google Forms
+    const GOOGLE_FORM_ENTRY = "entry.2127339236"; // Campo donde está el nombre del disco
+    const FORM_GOOGLE_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeipYqjP29R7XXVYAAm4kKSW1A6n-LAhz1JB6bEHwR6jAkMBQ/viewform"; // Cambia por tu URL real
 
     async function cargarProductosPorTipo(tipo, contenedorId) {
       const contenedor = document.getElementById(contenedorId);
@@ -185,7 +183,6 @@
           .from('products')
           .select('*')
           .ilike('type', `%${tipo}%`)
-          //.gt('stock', 0)  <-- Quitamos este filtro para traer también stock=0
           .order('name', { ascending: true });
 
         if (error) throw error;
@@ -219,11 +216,11 @@
 
           const descriptionFormatted = `<strong>Artista:</strong> ${artist}<br><strong>Sello:</strong> ${label}<br><strong>Origen:</strong> ${origin}<br><strong>Género:</strong> ${style}`;
 
-          // Construimos la imagen con el badge correcto según stock y descuento
+          // Badge según stock y descuento
           let badgeHTML = '';
           if (stock === 0) {
             badgeHTML = `<span class="agotado-badge">Agotado</span>`;
-            div.classList.add('stock-cero'); // para filtro grayscale
+            div.classList.add('stock-cero');
           } else if (priceDiscountedFormatted != null) {
             badgeHTML = `<span class="oferta-badge">Oferta</span>`;
           }
@@ -249,7 +246,9 @@
             btnWishlist.type = 'button';
             btnWishlist.textContent = 'Agregar a Wishlist';
             btnWishlist.addEventListener('click', () => {
-              window.open(FORM_GOOGLE_URL, '_blank');
+              // Codifica el nombre del producto para URL
+              const url = `${FORM_GOOGLE_URL}?${GOOGLE_FORM_ENTRY}=${encodeURIComponent(name)}`;
+              window.open(url, '_blank');
             });
             div.querySelector('.precio').insertAdjacentElement('afterend', btnWishlist);
           }
