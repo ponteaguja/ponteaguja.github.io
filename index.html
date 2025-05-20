@@ -5,31 +5,124 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Mi Inventario</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 20px; }
-    h1, h2 { text-align: center; color: #333; }
+    :root {
+      --color-fondo: #EBEBEB;
+      --color-titulo: #343434;
+      --color-titulo-producto: #343434;
+      --color-descripcion: #868C8C;
+      --color-precio: #005493;
+      --color-precio-descuento: #005493;
+      --color-precio-tachado: #999;
+      --color-resaltado: #AA703C;
+      --color-oferta-fondo: #d32f2f;
+      --color-oferta-texto: white;
+      --color-boton-wishlist-bg: #005493;
+      --color-boton-wishlist-text: white;
+      --color-boton-wishlist-hover-bg: #003f7d;
+    }
+    body { 
+      font-family: 'Helvetica', sans-serif; 
+      background: var(--color-fondo); 
+      margin: 20px; 
+    }
+    h1, h2 { 
+      text-align: center; 
+      color: var(--color-titulo); 
+    }
     #vinilos, #cuadros {
-      display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-bottom: 40px;
+      display: flex; 
+      flex-wrap: wrap; 
+      justify-content: center; 
+      gap: 20px; 
+      margin-bottom: 40px;
     }
     .producto {
-      background: white; border-radius: 8px; padding: 15px; width: 250px;
+      background: white; 
+      border-radius: 8px; 
+      padding: 15px; 
+      width: 250px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      display: flex; flex-direction: column; align-items: center;
+      display: flex; 
+      flex-direction: column; 
+      align-items: center;
       opacity: 0;
       transform: translateY(40px);
       transition: opacity 0.7s cubic-bezier(.39,.58,.57,1.01), transform 0.7s cubic-bezier(.39,.58,.57,1.01);
       will-change: opacity, transform;
+      text-decoration: none; /* para enlaces */
+      color: inherit;
     }
     .producto.visible {
       opacity: 1;
       transform: none;
     }
-    .producto img { max-width: 100%; border-radius: 6px; margin-bottom: 10px; }
-    .producto h2 { font-size: 1.2em; margin: 0 0 8px; color: #555; text-align: center; }
-    .descripcion {
-      font-size: 0.9em; color: #666; margin: 0 0 10px; text-align: center;
-      white-space: pre-wrap; /* Respeta saltos de línea */
+    .img-container {
+      position: relative;
+      width: 100%;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      overflow: hidden;
     }
-    .precio { font-weight: bold; font-size: 1.1em; color: #007b5e; }
+    .img-container img {
+      max-width: 100%;
+      display: block;
+      border-radius: 6px;
+    }
+    .oferta-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background-color: var(--color-oferta-fondo);
+      color: var(--color-oferta-texto);
+      padding: 4px 8px;
+      font-size: 0.8em;
+      font-weight: bold;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      user-select: none;
+      pointer-events: none;
+      z-index: 10;
+      text-transform: uppercase;
+    }
+    .producto h2 { 
+      font-size: 1.2em; 
+      margin: 0 0 8px; 
+      color: var(--color-titulo-producto); 
+      text-align: center; 
+    }
+    .descripcion {
+      font-size: 0.9em; 
+      color: var(--color-descripcion); 
+      margin: 0 0 10px; 
+      text-align: center;
+      white-space: pre-wrap;
+    }
+    .precio { 
+      font-weight: bold; 
+      font-size: 1.1em; 
+      color: var(--color-precio); 
+      margin-bottom: 10px;
+    }
+    /* Estilo botón Wishlist */
+    .btn-wishlist {
+      background-color: var(--color-boton-wishlist-bg);
+      color: var(--color-boton-wishlist-text);
+      border: none;
+      border-radius: 5px;
+      padding: 10px 16px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      user-select: none;
+      width: 100%;
+      max-width: 220px;
+      text-align: center;
+    }
+    .btn-wishlist:hover, .btn-wishlist:focus {
+      background-color: var(--color-boton-wishlist-hover-bg);
+      outline: none;
+    }
   </style>
 </head>
 <body>
@@ -47,10 +140,8 @@
     const SUPABASE_URL = "https://xblivnihoenidybqbevm.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhibGl2bmlob2VuaWR5YnFiZXZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMzY5NDIsImV4cCI6MjA2MjgxMjk0Mn0.BBY3JbyPtnq0kZwBxsXOTXg_gaGCvSqVR0GAoxZZoF4";
 
-    // Aquí usamos supabase.createClient del bundle UMD
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Observer para animar la aparición de productos
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -60,6 +151,8 @@
       });
     }, { threshold: 0.2 });
 
+    const FORM_GOOGLE_URL = "https://forms.gle/MLC1aN2bYkyQRWNNA"; // Cambia por tu URL real
+
     async function cargarProductosPorTipo(tipo, contenedorId) {
       const contenedor = document.getElementById(contenedorId);
       try {
@@ -67,8 +160,8 @@
           .from('products')
           .select('*')
           .ilike('type', `%${tipo}%`)
-          .gt('stock', 0)
-          .order('name', { ascending: true });  // Ordenar por nombre ascendente
+          //.gt('stock', 0)  <-- Quitamos este filtro para traer también stock=0
+          .order('name', { ascending: true });
 
         if (error) throw error;
 
@@ -78,32 +171,60 @@
         }
 
         contenedor.innerHTML = '';
-        data.forEach(({ name, price, price_discounted, image_url, artist, album, label, origin, style }) => {
+        data.forEach(({ name, price, price_discounted, image_url, artist, album, label, origin, style, stock }) => {
           const div = document.createElement('div');
           div.className = 'producto';
 
-          // Formatear precios con separador de miles (punto)
           const priceFormatted = price.toLocaleString('es-ES');
           const priceDiscountedFormatted = price_discounted != null ? price_discounted.toLocaleString('es-ES') : null;
 
-          // Construir HTML para precios
+          // Construimos el HTML del precio (si hay descuento) y el botón wishlist solo si stock=0
           let precioHTML = '';
           if (priceDiscountedFormatted != null) {
-            precioHTML = `<span style="text-decoration: line-through; color: #999;">$${priceFormatted}</span> <span style="color: #d32f2f; font-weight: bold;">$${priceDiscountedFormatted}</span>`;
+            precioHTML = `
+              <span style="text-decoration: line-through; color: var(--color-precio-tachado);">
+                $${priceFormatted}
+              </span> 
+              <span style="color: var(--color-precio-descuento); font-weight: bold;">
+                $${priceDiscountedFormatted}
+              </span>
+            `;
           } else {
             precioHTML = `<span class="precio">$${priceFormatted}</span>`;
           }
 
           const descriptionFormatted = `<strong>Artista:</strong> ${artist}<br><strong>Sello:</strong> ${label}<br><strong>Origen:</strong> ${origin}<br><strong>Género:</strong> ${style}`;
 
+          let imagenHTML = `
+            <div class="img-container">
+              <img src="${image_url}" alt="${name}" />
+              ${priceDiscountedFormatted != null ? '<span class="oferta-badge">Oferta</span>' : ''}
+            </div>
+          `;
+
+          // Construcción del innerHTML con precio siempre visible
           div.innerHTML = `
-            <img src="${image_url}" alt="${name}" />
+            ${imagenHTML}
             <h2>${name}</h2>
             <p class="descripcion">${descriptionFormatted}</p>
             <div class="precio">${precioHTML}</div>
           `;
+
+          // Si stock es 0, agregamos botón "Agregar a Wishlist" debajo del precio
+          if (stock === 0) {
+            div.classList.add('stock-cero');
+            const btnWishlist = document.createElement('button');
+            btnWishlist.className = 'btn-wishlist';
+            btnWishlist.type = 'button';
+            btnWishlist.textContent = 'Agregar a Wishlist';
+            btnWishlist.addEventListener('click', () => {
+              window.open(FORM_GOOGLE_URL, '_blank');
+            });
+            div.querySelector('.precio').insertAdjacentElement('afterend', btnWishlist);
+          }
+
           contenedor.appendChild(div);
-          observer.observe(div); // Activa la animación
+          observer.observe(div);
         });
 
       } catch (error) {
