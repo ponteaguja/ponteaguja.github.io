@@ -21,9 +21,9 @@
       --color-boton-wishlist-bg: #AA703C;
       --color-boton-wishlist-text: white;
       --color-boton-wishlist-hover-bg: #AA703C;
-      --color-boton-instagram-bg: #E4405F;
+      --color-boton-instagram-bg: #4F8F00; /* Cambia aquí el color del botón Instagram */
       --color-boton-instagram-text: white;
-      --color-boton-instagram-hover-bg: #AD2653;
+      --color-boton-instagram-hover-bg: #003f7d;
     }
     body { 
       font-family: 'Helvetica', sans-serif; 
@@ -133,8 +133,8 @@
       color: var(--color-boton-wishlist-text);
       border: none;
       border-radius: 5px;
-      padding: 10px 16px;
-      font-size: 1em;
+      padding: 6px 12px;
+      font-size: 0.9em;
       font-weight: bold;
       cursor: pointer;
       transition: background-color 0.3s ease;
@@ -153,28 +153,29 @@
       color: var(--color-boton-instagram-text);
       border: none;
       border-radius: 5px;
-      padding: 10px 16px;
-      font-size: 1em;
+      padding: 5px 10px; /* Más pequeño */
+      font-size: 0.9em;  /* Más pequeño */
       font-weight: bold;
       cursor: pointer;
       transition: background-color 0.3s ease;
       user-select: none;
-      width: 100%;
-      max-width: 220px;
+      width: auto;
+      min-width: 0;
+      max-width: 140px; /* Más pequeño */
       text-align: center;
       margin-top: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 6px;
     }
     .btn-instagram:hover, .btn-instagram:focus {
       background-color: var(--color-boton-instagram-hover-bg);
       outline: none;
     }
     .btn-instagram svg {
-      width: 1.2em;
-      height: 1.2em;
+      width: 1em;
+      height: 1em;
       vertical-align: middle;
       fill: currentColor;
     }
@@ -189,7 +190,6 @@
   <h2>Cuadros</h2>
   <div id="cuadros">Cargando cuadros...</div>
   
-  <!-- Carga el bundle UMD de Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script>
     const SUPABASE_URL = "https://xblivnihoenidybqbevm.supabase.co";
@@ -206,13 +206,10 @@
       });
     }, { threshold: 0.2 });
 
-    // Reemplaza este valor por el parámetro real de tu formulario de Google Forms
-    const GOOGLE_FORM_ENTRY = "entry.2127339236"; // Campo donde está el nombre del disco
-    const FORM_GOOGLE_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeipYqjP29R7XXVYAAm4kKSW1A6n-LAhz1JB6bEHwR6jAkMBQ/viewform"; // Cambia por tu URL real
-
-    // Instagram username
+    const GOOGLE_FORM_ENTRY = "entry.2127339236"; // Cambia por tu parámetro real
+    const FORM_GOOGLE_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeipYqjP29R7XXVYAAm4kKSW1A6n-LAhz1JB6bEHwR6jAkMBQ/viewform";
     const INSTAGRAM_USER = "ponteaguja.cl";
-    // Mensaje predefinido
+
     function getInstagramMessage(productName) {
       return `¡Hola! Estoy interesado en el producto: ${productName}`;
     }
@@ -257,7 +254,6 @@
 
           const descriptionFormatted = `<strong>Artista:</strong> ${artist}<br><strong>Sello:</strong> ${label}<br><strong>Origen:</strong> ${origin}<br><strong>Género:</strong> ${style}`;
 
-          // Badge según stock y descuento
           let badgeHTML = '';
           if (stock === 0) {
             badgeHTML = `<span class="agotado-badge">Agotado</span>`;
@@ -298,21 +294,12 @@
             btnInstagram.type = 'button';
             btnInstagram.innerHTML = `
               <svg viewBox="0 0 448 512"><path d="M224,202.66A53.34,53.34,0,1,0,277.34,256,53.38,53.38,0,0,0,224,202.66Zm124.71-41a54,54,0,0,0-30.29-30.29C297.7,120,256,120,256,120H192s-41.7,0-62.42,11.37a54,54,0,0,0-30.29,30.29C88,170.3,88,212,88,212v84s0,41.7,11.37,62.42a54,54,0,0,0,30.29,30.29C150.3,392,192,392,192,392h64s41.7,0,62.42-11.37a54,54,0,0,0,30.29-30.29C360,337.7,360,296,360,296V212S360,170.3,348.71,161.71ZM224,338a82,82,0,1,1,82-82A82,82,0,0,1,224,338Zm85.4-148.6a19.2,19.2,0,1,1-19.2-19.2A19.2,19.2,0,0,1,309.4,189.4Z"/></svg>
-              Consultar por Instagram
+              Pídelo por DM
             `;
+            
             btnInstagram.addEventListener('click', () => {
               const mensaje = getInstagramMessage(name);
-              // Instagram DM link:
-              // https://instagram.com/direct/t/ponteaguja (no soporta mensaje prellenado)
-              // Usamos el perfil con mensaje predefinido en la bio, o sugerimos copiar el mensaje.
-              // Mejor opción: abrir perfil con mensaje prellenado para copiar.
-              // Alternativa: usar https://ig.me/m/ponteaguja?text=... pero solo funciona en móviles y con cuentas personales.
-              const igUrl = `https://instagram.com/${INSTAGRAM_USER}`;
-              // Intentar abrir DM directo con mensaje (solo funciona en móvil y algunas cuentas):
-              // const igDmUrl = `https://ig.me/m/${INSTAGRAM_USER}?text=${encodeURIComponent(mensaje)}`;
-              // window.open(igDmUrl, '_blank');
-              // Mejor compatibilidad:
-              window.open(igUrl, '_blank');
+              window.open(`https://instagram.com/${INSTAGRAM_USER}`, '_blank');
               setTimeout(() => {
                 alert(`Mensaje sugerido para enviar por Instagram:\n\n${mensaje}`);
               }, 600);
