@@ -16,6 +16,8 @@
       --color-resaltado: #AA703C;
       --color-oferta-fondo: #d32f2f;
       --color-oferta-texto: white;
+      --color-agotado-fondo: #555555;
+      --color-agotado-texto: white;
       --color-boton-wishlist-bg: #AA703C;
       --color-boton-wishlist-text: white;
       --color-boton-wishlist-hover-bg: #AA703C;
@@ -49,7 +51,7 @@
       transform: translateY(40px);
       transition: opacity 0.7s cubic-bezier(.39,.58,.57,1.01), transform 0.7s cubic-bezier(.39,.58,.57,1.01);
       will-change: opacity, transform;
-      text-decoration: none; /* para enlaces */
+      text-decoration: none;
       color: inherit;
     }
     .producto.visible {
@@ -73,6 +75,7 @@
     .producto.stock-cero .img-container img {
       filter: grayscale(100%);
     }
+    /* Fleje "Oferta" */
     .oferta-badge {
       position: absolute;
       top: 8px;
@@ -87,6 +90,23 @@
       user-select: none;
       pointer-events: none;
       z-index: 10;
+      text-transform: uppercase;
+    }
+    /* Fleje "Agotado" con mayor prioridad (z-index mayor) */
+    .agotado-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background-color: var(--color-agotado-fondo);
+      color: var(--color-agotado-texto);
+      padding: 4px 8px;
+      font-size: 0.8em;
+      font-weight: bold;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+      user-select: none;
+      pointer-events: none;
+      z-index: 20; /* mayor que oferta */
       text-transform: uppercase;
     }
     .producto h2 { 
@@ -183,7 +203,6 @@
           const priceFormatted = price.toLocaleString('es-ES');
           const priceDiscountedFormatted = price_discounted != null ? price_discounted.toLocaleString('es-ES') : null;
 
-          // Construimos el HTML del precio (si hay descuento) y el botón wishlist solo si stock=0
           let precioHTML = '';
           if (priceDiscountedFormatted != null) {
             precioHTML = `
@@ -200,14 +219,22 @@
 
           const descriptionFormatted = `<strong>Artista:</strong> ${artist}<br><strong>Sello:</strong> ${label}<br><strong>Origen:</strong> ${origin}<br><strong>Género:</strong> ${style}`;
 
-          let imagenHTML = `
+          // Construimos la imagen con el badge correcto según stock y descuento
+          let badgeHTML = '';
+          if (stock === 0) {
+            badgeHTML = `<span class="agotado-badge">Agotado</span>`;
+            div.classList.add('stock-cero'); // para filtro grayscale
+          } else if (priceDiscountedFormatted != null) {
+            badgeHTML = `<span class="oferta-badge">Oferta</span>`;
+          }
+
+          const imagenHTML = `
             <div class="img-container">
               <img src="${image_url}" alt="${name}" />
-              ${priceDiscountedFormatted != null ? '<span class="oferta-badge">Oferta</span>' : ''}
+              ${badgeHTML}
             </div>
           `;
 
-          // Construcción del innerHTML con precio siempre visible
           div.innerHTML = `
             ${imagenHTML}
             <h2>${name}</h2>
@@ -215,9 +242,8 @@
             <div class="precio">${precioHTML}</div>
           `;
 
-          // Si stock es 0, agregamos clase para blanco y negro y botón "Agregar a Wishlist"
+          // Si stock es 0, agregamos botón "Agregar a Wishlist"
           if (stock === 0) {
-            div.classList.add('stock-cero');
             const btnWishlist = document.createElement('button');
             btnWishlist.className = 'btn-wishlist';
             btnWishlist.type = 'button';
