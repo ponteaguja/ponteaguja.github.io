@@ -16,9 +16,9 @@
       --color-resaltado: #AA703C;
       --color-oferta-fondo: #d32f2f;
       --color-oferta-texto: white;
-      --color-boton-wishlist-bg: #005493;
+      --color-boton-wishlist-bg: #AA703C;
       --color-boton-wishlist-text: white;
-      --color-boton-wishlist-hover-bg: #003f7d;
+      --color-boton-wishlist-hover-bg: #AA703C;
     }
     body { 
       font-family: 'Helvetica', sans-serif; 
@@ -67,6 +67,11 @@
       max-width: 100%;
       display: block;
       border-radius: 6px;
+      transition: filter 0.3s ease;
+    }
+    /* Imagen en blanco y negro para productos sin stock */
+    .producto.stock-cero .img-container img {
+      filter: grayscale(100%);
     }
     .oferta-badge {
       position: absolute;
@@ -210,7 +215,7 @@
             <div class="precio">${precioHTML}</div>
           `;
 
-          // Si stock es 0, agregamos botón "Agregar a Wishlist" debajo del precio
+          // Si stock es 0, agregamos clase para blanco y negro y botón "Agregar a Wishlist"
           if (stock === 0) {
             div.classList.add('stock-cero');
             const btnWishlist = document.createElement('button');
