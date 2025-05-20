@@ -21,6 +21,9 @@
       --color-boton-wishlist-bg: #AA703C;
       --color-boton-wishlist-text: white;
       --color-boton-wishlist-hover-bg: #AA703C;
+      --color-boton-instagram-bg: #E4405F;
+      --color-boton-instagram-text: white;
+      --color-boton-instagram-hover-bg: #AD2653;
     }
     body { 
       font-family: 'Helvetica', sans-serif; 
@@ -139,10 +142,41 @@
       width: 100%;
       max-width: 220px;
       text-align: center;
+      margin-top: 6px;
     }
     .btn-wishlist:hover, .btn-wishlist:focus {
       background-color: var(--color-boton-wishlist-hover-bg);
       outline: none;
+    }
+    .btn-instagram {
+      background-color: var(--color-boton-instagram-bg);
+      color: var(--color-boton-instagram-text);
+      border: none;
+      border-radius: 5px;
+      padding: 10px 16px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      user-select: none;
+      width: 100%;
+      max-width: 220px;
+      text-align: center;
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-instagram:hover, .btn-instagram:focus {
+      background-color: var(--color-boton-instagram-hover-bg);
+      outline: none;
+    }
+    .btn-instagram svg {
+      width: 1.2em;
+      height: 1.2em;
+      vertical-align: middle;
+      fill: currentColor;
     }
   </style>
 </head>
@@ -176,6 +210,13 @@
     const GOOGLE_FORM_ENTRY = "entry.2127339236"; // Campo donde está el nombre del disco
     const FORM_GOOGLE_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeipYqjP29R7XXVYAAm4kKSW1A6n-LAhz1JB6bEHwR6jAkMBQ/viewform"; // Cambia por tu URL real
 
+    // Instagram username
+    const INSTAGRAM_USER = "ponteaguja.cl";
+    // Mensaje predefinido
+    function getInstagramMessage(productName) {
+      return `¡Hola! Estoy interesado en el producto: ${productName}`;
+    }
+
     async function cargarProductosPorTipo(tipo, contenedorId) {
       const contenedor = document.getElementById(contenedorId);
       try {
@@ -183,7 +224,6 @@
           .from('products')
           .select('*')
           .ilike('type', `%${tipo}%`)
-          //.gt('stock', 0)
           .order('name', { ascending: true });
 
         if (error) throw error;
@@ -247,11 +287,37 @@
             btnWishlist.type = 'button';
             btnWishlist.textContent = 'Agregar a Wishlist';
             btnWishlist.addEventListener('click', () => {
-              // Codifica el nombre del producto para URL
               const url = `${FORM_GOOGLE_URL}?${GOOGLE_FORM_ENTRY}=${encodeURIComponent(name)}`;
               window.open(url, '_blank');
             });
             div.querySelector('.precio').insertAdjacentElement('afterend', btnWishlist);
+          } else {
+            // Si hay stock, agregamos botón Instagram
+            const btnInstagram = document.createElement('button');
+            btnInstagram.className = 'btn-instagram';
+            btnInstagram.type = 'button';
+            btnInstagram.innerHTML = `
+              <svg viewBox="0 0 448 512"><path d="M224,202.66A53.34,53.34,0,1,0,277.34,256,53.38,53.38,0,0,0,224,202.66Zm124.71-41a54,54,0,0,0-30.29-30.29C297.7,120,256,120,256,120H192s-41.7,0-62.42,11.37a54,54,0,0,0-30.29,30.29C88,170.3,88,212,88,212v84s0,41.7,11.37,62.42a54,54,0,0,0,30.29,30.29C150.3,392,192,392,192,392h64s41.7,0,62.42-11.37a54,54,0,0,0,30.29-30.29C360,337.7,360,296,360,296V212S360,170.3,348.71,161.71ZM224,338a82,82,0,1,1,82-82A82,82,0,0,1,224,338Zm85.4-148.6a19.2,19.2,0,1,1-19.2-19.2A19.2,19.2,0,0,1,309.4,189.4Z"/></svg>
+              Consultar por Instagram
+            `;
+            btnInstagram.addEventListener('click', () => {
+              const mensaje = getInstagramMessage(name);
+              // Instagram DM link:
+              // https://instagram.com/direct/t/ponteaguja (no soporta mensaje prellenado)
+              // Usamos el perfil con mensaje predefinido en la bio, o sugerimos copiar el mensaje.
+              // Mejor opción: abrir perfil con mensaje prellenado para copiar.
+              // Alternativa: usar https://ig.me/m/ponteaguja?text=... pero solo funciona en móviles y con cuentas personales.
+              const igUrl = `https://instagram.com/${INSTAGRAM_USER}`;
+              // Intentar abrir DM directo con mensaje (solo funciona en móvil y algunas cuentas):
+              // const igDmUrl = `https://ig.me/m/${INSTAGRAM_USER}?text=${encodeURIComponent(mensaje)}`;
+              // window.open(igDmUrl, '_blank');
+              // Mejor compatibilidad:
+              window.open(igUrl, '_blank');
+              setTimeout(() => {
+                alert(`Mensaje sugerido para enviar por Instagram:\n\n${mensaje}`);
+              }, 600);
+            });
+            div.querySelector('.precio').insertAdjacentElement('afterend', btnInstagram);
           }
 
           contenedor.appendChild(div);
